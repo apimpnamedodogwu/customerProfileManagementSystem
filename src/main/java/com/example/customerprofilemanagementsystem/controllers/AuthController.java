@@ -35,6 +35,6 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.generateJWTToken(authentication);
         httpServletResponse.addHeader("access-token", token);
-        return new ResponseEntity<>(new ApiResponse("success", 200, true), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("success", 200, true, token), HttpStatus.OK);
     }
 }

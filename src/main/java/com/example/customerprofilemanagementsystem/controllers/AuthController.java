@@ -34,7 +34,9 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.generateJWTToken(authentication);
-        httpServletResponse.addHeader("access-token", token);
+        final HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.set("access-token", token);
+//        httpServletResponse.addHeader("access-token", token);
         return new ResponseEntity<>(new ApiResponse("success", 200, true, token), HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.example.customerprofilemanagementsystem.controllers;
 import com.example.customerprofilemanagementsystem.data.models.dto.ApiResponse;
 import com.example.customerprofilemanagementsystem.data.models.dto.LoginRequest;
 import com.example.customerprofilemanagementsystem.security.TokenProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -26,15 +27,14 @@ public class AuthController {
     private final TokenProvider tokenProvider;
 
     @PostMapping("/user/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest,  HttpServletResponse httpServletResponse ) {
         log.info("login method called with --> {}", loginRequest);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.generateJWTToken(authentication);
-        final HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("access-token", token);
-        return new ResponseEntity<>(new ApiResponse("success", 200, true), responseHeaders, HttpStatus.OK);
+        httpServletResponse.addHeader("access-token", token);
+        return new ResponseEntity<>(new ApiResponse("success", 200, true), HttpStatus.OK);
     }
 }

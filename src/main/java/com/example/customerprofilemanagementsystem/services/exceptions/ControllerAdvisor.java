@@ -23,28 +23,28 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
-    private static final String body = "Oops, that is inaccurate!";
+    private  String body;
     private final MessageSource messageSource;
 
     @ExceptionHandler(RoleException.class)
     public ResponseEntity<Object> handleRoleException(RoleException exception, WebRequest request) {
-        return handleExceptionInternal(exception, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(exception, body=exception.getLocalizedMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(ExistingCustomerException.class)
     public ResponseEntity<Object> handleExistingCustomerException(ExistingCustomerException exception, WebRequest request) {
-        return handleExceptionInternal(exception, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(exception, body=exception.getLocalizedMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(AdminDoesNotExistException.class)
     public ResponseEntity<Object> handleAdminDoesNotExistException(AdminDoesNotExistException exception, WebRequest webRequest) {
-        return handleExceptionInternal(exception, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+        return handleExceptionInternal(exception, body=exception.getLocalizedMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
     }
 
-//    @ExceptionHandler(IsAnAdminException.class)
-//    public ResponseEntity<Object> handleIsAdminException(IsAnAdminException exception, WebRequest webRequest) {
-//        return handleExceptionInternal(exception,  body, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
-//    }
+    @ExceptionHandler(IsAnAdminException.class)
+    public ResponseEntity<Object> handleIsAdminException(IsAnAdminException exception, WebRequest webRequest) {
+        return handleExceptionInternal(exception,  body=exception.getLocalizedMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -57,12 +57,12 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorMessage(errorMessages.toString()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(IsAnAdminException.class)
-    public ResponseEntity<ErrorAPIResponse> handleException(IsAnAdminException exception) {
-        exception.printStackTrace();
-        return ResponseEntity.badRequest().body(ErrorAPIResponse.builder()
-                .message(exception.getLocalizedMessage())
-                .success(false)
-                .build());
-    }
+//    @ExceptionHandler(IsAnAdminException.class)
+//    public ResponseEntity<ErrorAPIResponse> handleException(IsAnAdminException exception) {
+//        exception.printStackTrace();
+//        return ResponseEntity.badRequest().body(ErrorAPIResponse.builder()
+//                .message(exception.getLocalizedMessage())
+//                .success(false)
+//                .build());
+//    }
 }

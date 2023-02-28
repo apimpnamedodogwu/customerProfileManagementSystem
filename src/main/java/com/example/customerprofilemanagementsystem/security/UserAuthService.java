@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -28,13 +29,17 @@ public class UserAuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Admin admin = null;
-        try {
-            admin = adminRepository.findAdminByEmailIgnoreCase(email).orElseThrow(() -> new AdminDoesNotExistException("Admin not found!"));
-        } catch (AdminDoesNotExistException e) {
-            log.error(e.getMessage());
+        Admin admin = adminRepository.findAdminByEmail(email);
+        if (admin == null) {
+            try {
+                throw new AdminDoesNotExistException("Admin with " + email + " does not exist!");
+            } catch (AdminDoesNotExistException e) {
+                log.error(e.getMessage());
+                throw new RuntimeException(e);
+            }
         }
         return new org.springframework.security.core.userdetails.User(admin.getEmail(), admin.getPassword(), getAuthorities(admin.getRole()));
+
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Role role) {

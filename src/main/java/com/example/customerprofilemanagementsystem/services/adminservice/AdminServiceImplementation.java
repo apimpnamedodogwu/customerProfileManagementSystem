@@ -1,27 +1,21 @@
 package com.example.customerprofilemanagementsystem.services.adminservice;
 
-import com.example.customerprofilemanagementsystem.data.enums.ProductPlan;
-import com.example.customerprofilemanagementsystem.data.models.dto.CustomerCreationRequest;
-import com.example.customerprofilemanagementsystem.data.models.dto.CustomerResponse;
-import com.example.customerprofilemanagementsystem.services.customerservice.CustomerService;
-import com.example.customerprofilemanagementsystem.services.exceptions.ExistingCustomerException;
+import com.example.customerprofilemanagementsystem.data.models.Admin;
+import com.example.customerprofilemanagementsystem.data.repositories.AdminRepository;
+
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImplementation implements AdminService {
-    private final CustomerService customerService;
+    private final AdminRepository adminRepository;
 
-    @Override
-    public void addACustomer(CustomerCreationRequest request) {
-        customerService.createACustomer(request);
-    }
-
-    @Override
-    public CustomerResponse updateCustomerDetail(long id, ProductPlan productPlan) throws ExistingCustomerException {
-        return customerService.updateCustomerPlan(id, productPlan);
+    public Optional<Admin> findAdmin(String email) {
+        return adminRepository.findAdminByEmailIgnoreCase(email);
     }
 }

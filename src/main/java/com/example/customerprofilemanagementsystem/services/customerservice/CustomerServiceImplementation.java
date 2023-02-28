@@ -2,12 +2,15 @@ package com.example.customerprofilemanagementsystem.services.customerservice;
 
 import com.example.customerprofilemanagementsystem.data.enums.ProductFeature;
 import com.example.customerprofilemanagementsystem.data.enums.ProductPlan;
+import com.example.customerprofilemanagementsystem.data.models.Admin;
 import com.example.customerprofilemanagementsystem.data.models.Customer;
 import com.example.customerprofilemanagementsystem.data.models.dto.CustomerCreationRequest;
 import com.example.customerprofilemanagementsystem.data.models.dto.CustomerResponse;
 import com.example.customerprofilemanagementsystem.data.repositories.CustomerRepository;
+import com.example.customerprofilemanagementsystem.services.adminservice.AdminService;
 import com.example.customerprofilemanagementsystem.services.exceptions.ExistingCustomerException;
 
+import com.example.customerprofilemanagementsystem.services.exceptions.IsAnAdminException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -19,10 +22,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CustomerServiceImplementation implements CustomerService {
     private final CustomerRepository customerRepository;
+    private final AdminService adminService;
 
     @Override
-    public void createACustomer(CustomerCreationRequest request) {
+    public void createACustomer(CustomerCreationRequest request) throws IsAnAdminException {
         Customer customer = new Customer();
+        Optional<Admin> admin = adminService.findAdmin(request.getEmail());
+        if (admin.isPresent()) {
+            throw new IsAnAdminException(request.getEmail() + " belongs to an admin.");
+        }
         BeanUtils.copyProperties(request, customer);
         customer.setProductFeature(setProductPlan(request.getProductPlan()));
         customerRepository.save(customer);

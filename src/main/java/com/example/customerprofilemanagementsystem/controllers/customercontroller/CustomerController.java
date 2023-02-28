@@ -5,6 +5,7 @@ import com.example.customerprofilemanagementsystem.data.models.dto.CustomerCreat
 import com.example.customerprofilemanagementsystem.data.models.dto.CustomerResponse;
 import com.example.customerprofilemanagementsystem.services.customerservice.CustomerServiceImplementation;
 import com.example.customerprofilemanagementsystem.services.exceptions.ExistingCustomerException;
+import com.example.customerprofilemanagementsystem.services.exceptions.IsAnAdminException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class CustomerController {
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> addACustomer(@Valid @RequestBody CustomerCreationRequest request) {
+    public ResponseEntity<?> addACustomer(@Valid @RequestBody CustomerCreationRequest request) throws IsAnAdminException {
         customerServiceImplementation.createACustomer(request);
         String message = "A customer has been created successfully!";
         return new ResponseEntity<>(message, HttpStatus.OK);

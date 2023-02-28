@@ -2,13 +2,16 @@ package com.example.customerprofilemanagementsystem;
 
 import com.example.customerprofilemanagementsystem.controllers.customercontroller.CustomerController;
 import com.example.customerprofilemanagementsystem.data.enums.ProductPlan;
+import com.example.customerprofilemanagementsystem.data.models.Admin;
 import com.example.customerprofilemanagementsystem.data.models.Customer;
 import com.example.customerprofilemanagementsystem.data.models.dto.CustomerCreationRequest;
 import com.example.customerprofilemanagementsystem.data.models.dto.CustomerResponse;
 import com.example.customerprofilemanagementsystem.data.repositories.CustomerRepository;
+import com.example.customerprofilemanagementsystem.services.adminservice.AdminService;
 import com.example.customerprofilemanagementsystem.services.customerservice.CustomerServiceImplementation;
 
 import com.example.customerprofilemanagementsystem.services.exceptions.ExistingCustomerException;
+import com.example.customerprofilemanagementsystem.services.exceptions.IsAnAdminException;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +25,14 @@ import static org.mockito.Mockito.*;
 
 public class AdminServiceImplementationTest {
 
-
     CustomerRepository customerRepository = mock(CustomerRepository.class);
-    CustomerServiceImplementation customerService = new CustomerServiceImplementation(customerRepository);
+    AdminService adminService = mock(AdminService.class);
+    CustomerServiceImplementation customerService = new CustomerServiceImplementation(customerRepository, adminService);
     CustomerController customerController = new CustomerController(customerService);
 
 
     @Test
-    void testThatAdminCanRegisterACustomer() {
+    void testThatAdminCanRegisterACustomer() throws IsAnAdminException {
         CustomerCreationRequest request = CustomerCreationRequest.builder()
                 .email("edenelenwoke@gmail.com")
                 .firstName("Eden")
@@ -74,6 +77,19 @@ public class AdminServiceImplementationTest {
         customer.setProductPlan(ProductPlan.BASIC);
         when(customerRepository.findCustomerById(anyLong())).thenReturn(Optional.empty());
         assertThrows(ExistingCustomerException.class, () -> customerController.updateCustomerPlan(userId, productPlan));
+    }
+
+    @Test
+    void testThatAnAdminCannotBeRegisteredAsACustomer() {
+        CustomerCreationRequest request = CustomerCreationRequest.builder()
+                .lastName("Obi")
+                .firstName("Greg")
+                .email("eden@yahoo.com")
+                .phoneNumber("08160577375")
+                .productPlan(ProductPlan.GOLD)
+                .build();
+        when(adminService.findAdmin(anyString())).thenReturn(Optional.of(new Admin()));
+        assertThrows(IsAnAdminException.class, () -> customerController.addACustomer(request));
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.customerprofilemanagementsystem.services.exceptions;
 
+import com.example.customerprofilemanagementsystem.data.models.dto.ApiResponse;
+import com.example.customerprofilemanagementsystem.data.models.dto.ErrorAPIResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.spi.ErrorMessage;
 import org.springframework.context.MessageSource;
@@ -39,10 +41,10 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(exception, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
     }
 
-    @ExceptionHandler(IsAnAdminException.class)
-    public ResponseEntity<Object> handleIsAdminException(IsAnAdminException exception, WebRequest webRequest) {
-        return handleExceptionInternal(exception, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
-    }
+//    @ExceptionHandler(IsAnAdminException.class)
+//    public ResponseEntity<Object> handleIsAdminException(IsAnAdminException exception, WebRequest webRequest) {
+//        return handleExceptionInternal(exception,  body, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+//    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -50,8 +52,17 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         Locale locale = new Locale("en");
         List<String> errorMessages = result.getAllErrors()
                 .stream()
-                .map(err-> messageSource.getMessage(err, locale))
+                .map(err -> messageSource.getMessage(err, locale))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(new ErrorMessage(errorMessages.toString()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IsAnAdminException.class)
+    public ResponseEntity<ErrorAPIResponse> handleException(IsAnAdminException exception) {
+        exception.printStackTrace();
+        return ResponseEntity.badRequest().body(ErrorAPIResponse.builder()
+                .message(exception.getLocalizedMessage())
+                .success(false)
+                .build());
     }
 }

@@ -9,7 +9,7 @@ import com.example.customerprofilemanagementsystem.services.exceptions.IsAnAdmin
 import java.util.List;
 
 public interface CustomerService {
-    void createACustomer(CustomerCreationRequest request) throws IsAnAdminException;
+    CustomerResponse createACustomer(CustomerCreationRequest request) throws IsAnAdminException;
 
     List<CustomerResponse> customers(int pageNumber, int size);
     CustomerResponse updateCustomerPlan(long id, ProductPlan productPlan) throws ExistingCustomerException;

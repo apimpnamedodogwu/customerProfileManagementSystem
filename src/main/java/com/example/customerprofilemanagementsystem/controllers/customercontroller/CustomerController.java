@@ -27,9 +27,7 @@ public class CustomerController {
     @PostMapping("")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> addACustomer(@Valid @RequestBody CustomerCreationRequest request) throws IsAnAdminException {
-        customerServiceImplementation.createACustomer(request);
-        String message = "A customer has been created successfully!";
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return new ResponseEntity<>(customerServiceImplementation.createACustomer(request), HttpStatus.OK);
     }
 
     @GetMapping("")

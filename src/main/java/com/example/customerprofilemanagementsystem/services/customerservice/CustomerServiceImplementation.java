@@ -25,7 +25,7 @@ public class CustomerServiceImplementation implements CustomerService {
     private final AdminService adminService;
 
     @Override
-    public void createACustomer(CustomerCreationRequest request) throws IsAnAdminException {
+    public CustomerResponse createACustomer(CustomerCreationRequest request) throws IsAnAdminException {
         Customer customer = new Customer();
         Optional<Admin> admin = adminService.findAdmin(request.getEmail());
         if (admin.isPresent()) {
@@ -33,8 +33,10 @@ public class CustomerServiceImplementation implements CustomerService {
         }
         BeanUtils.copyProperties(request, customer);
         customer.setProductFeature(setProductPlan(request.getProductPlan()));
-        customerRepository.save(customer);
-
+        Customer savedCustomer = customerRepository.save(customer);
+        CustomerResponse customerResponse = new CustomerResponse();
+        BeanUtils.copyProperties(savedCustomer, customerResponse);
+        return customerResponse;
     }
 
     private Set<ProductFeature> setProductPlan(ProductPlan productPlan) {

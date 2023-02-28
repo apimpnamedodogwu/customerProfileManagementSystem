@@ -10,6 +10,9 @@ import java.util.Set;
 @Setter
 @Getter
 public class CustomerResponse {
+
+    private long id;
+    private String email;
     private String firstName;
     private String lastName;
     private ProductPlan productPlan;

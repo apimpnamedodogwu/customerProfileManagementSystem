@@ -8,3 +8,8 @@
 
 - email: [eden@yahoo.com](mailto:eden@yahoo.com)
 - password: 1234
+
+### Deployed: Railway
+### Database: MySQL
+### Back-end Framework: Springboot
+### Language: Java

@@ -9,7 +9,7 @@
 - email: [eden@yahoo.com](mailto:eden@yahoo.com)
 - password: 1234
 
-### Deployed: Railway
+### Deployed: Railway - https://railway.app/dashboard
 ### Database: MySQL
 ### Back-end Framework: Springboot
 ### Language: Java

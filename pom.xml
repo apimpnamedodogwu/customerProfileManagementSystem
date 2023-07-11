@@ -103,5 +103,6 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>customer-profile-docker</finalName>
     </build>
 </project>
